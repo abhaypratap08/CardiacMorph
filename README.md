@@ -89,10 +89,33 @@ mvn -pl api-layer -am package
 ### 2) Run API + JavaFX visualizer together
 
 ```bash
+mvn -pl api-layer -am install
 mvn -pl api-layer spring-boot:run
 ```
 
 When Spring starts, it also launches JavaFX and the heart starts pumping in real time.
+
+### 3) If you are already inside `api-layer/`
+
+Run from the reactor root explicitly so sibling modules are built/resolved and installed:
+
+```bash
+mvn -f ../pom.xml -pl api-layer -am install
+mvn -f ../pom.xml -pl api-layer spring-boot:run
+```
+
+> Why this matters: running `mvn -pl api-layer spring-boot:run` directly can fail because
+> `simulation-core` and `fx-visualizer` are sibling reactor modules and may not be installed in your local Maven repo yet.
+
+Or use the helper script:
+
+```bash
+./scripts/run-api.sh
+```
+
+### Headless environments (CI/servers)
+
+If no display/OpenGL is available, JavaFX can fail to initialize. In that case this project now logs a warning and keeps the Spring API running without the visualizer.
 
 ## Notes on Performance
 
